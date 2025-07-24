@@ -18,25 +18,31 @@ namespace EmployeeManWinforms
             InitializeComponent();
         }
 
+                //var con = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\kalho\\source\\repos\\EmployeeManWinforms\\Test.mdf;Integrated Security=True;Connect Timeout=30");
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                var con = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\kalho\\source\\repos\\EmployeeManWinforms\\Test.mdf;Integrated Security=True;Connect Timeout=30");
-                var adp = new SqlDataAdapter($"DELETE FROM emp WHERE name='{textBox1}'; ", con);
-                DataSet ds = new DataSet();
-                con.Open();
-                adp.Fill(ds);
-                if (ds.HasChanges())
+                using (var con = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\kalho\\source\\repos\\EmployeeManWinforms\\Test.mdf;Integrated Security=True;Connect Timeout=30"))
                 {
-                    MessageBox.Show("Deleted!");
+                    string query = "DELETE FROM emp WHERE name = @name";
+                    using (var cm = new SqlCommand(query, con))
+                    {
+                        cm.Parameters.AddWithValue("@name", textBox1.Text);
+                        con.Open();
+                        int rowsAffected = cm.ExecuteNonQuery();
+                        con.Close();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Deleted!");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Not found!");
+                        }
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("Not found");
-                }
-                con.Close();
-                
             }
             catch (Exception ex)
             {
