@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.SqlServer;
 
 namespace EmployeeManWinforms
 {
@@ -44,15 +45,24 @@ namespace EmployeeManWinforms
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var con = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\kalho\\source\\repos\\EmployeeManWinforms\\Test.mdf;Integrated Security=True;Connect Timeout=30");
-            var adp = new SqlDataAdapter($"SELECT * FROM emp", con);
-            DataSet ds = new DataSet();
-            con.Open();
-            adp.Fill(ds);
-            var emps = ds;
-            ds.to
-            con.Close();
-
+            try
+            {
+                var con = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\kalho\\source\\repos\\EmployeeManWinforms\\Test.mdf;Integrated Security=True;Connect Timeout=30");
+                var adp = new SqlDataAdapter($"SELECT * FROM emp", con);
+                DataTable dt = new DataTable();
+                con.Open();
+                adp.Fill(dt);
+                dataGridView1.DataSource = dt;
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridView1.DefaultCellStyle.BackColor = Color.LightGray;
+                dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Environment.Exit(0);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -68,6 +78,17 @@ namespace EmployeeManWinforms
         private void button4_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Form3 form3 = new Form3();
+            form3.Show();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
